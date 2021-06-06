@@ -7,7 +7,7 @@ import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import { BlockchainStateModel } from './Layout';
-import LotteryCard from '../Card';
+import CardContainer from '../Card';
 import { Link } from 'react-router-dom';
 
 export interface INavBarProps {
@@ -49,7 +49,7 @@ const NavBar: (props: INavBarProps) => JSX.Element = (props: INavBarProps): JSX.
     <Button
       onClick={() =>
         props.onAccountClicked(
-          <LotteryCard
+          <CardContainer
             actions={
               <Button color="primary" size="small">
                 Disconnect (todo)

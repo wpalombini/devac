@@ -4,18 +4,18 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 
-export interface ILotteryCardProps {
+export interface ICardProps {
   actions: JSX.Element | null;
   content: JSX.Element | null;
 }
 
 const useStyles = makeStyles({
   root: {
-    minWidth: 275,
+    width: '100%',
   },
 });
 
-const LotteryCard: (props: ILotteryCardProps) => JSX.Element = (props: ILotteryCardProps): JSX.Element => {
+const CardContainer: (props: ICardProps) => JSX.Element = (props: ICardProps): JSX.Element => {
   const classes = useStyles();
 
   return (
@@ -26,4 +26,4 @@ const LotteryCard: (props: ILotteryCardProps) => JSX.Element = (props: ILotteryC
   );
 };
 
-export default LotteryCard;
+export default CardContainer;

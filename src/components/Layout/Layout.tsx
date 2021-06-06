@@ -3,13 +3,14 @@ import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 import { AnimatedSwitch, spring } from 'react-router-transition';
 import './Layout.css';
 import { BlockchainService } from '../../services/BlockchainService';
-import LotteryDialog from '../Dialog';
+import DialogContainer from '../Dialog';
 import About from '../pages/About';
 import Home from '../pages/Home';
 import NavBar from './NavBar';
 import SideMenu from './SideMenu';
-import { House, Info } from '@material-ui/icons';
+import { CardMembership, House, Info } from '@material-ui/icons';
 import { Container } from '@material-ui/core';
+import Certificate from '../pages/Certificate';
 
 export class BlockchainStateModel {
   public accountAddress: string | null;
@@ -31,6 +32,11 @@ const Layout: () => JSX.Element = (): JSX.Element => {
       title: 'Home',
       url: '/',
       icon: <House />,
+    },
+    {
+      title: 'Certificate',
+      url: '/certificate',
+      icon: <CardMembership />,
     },
     {
       title: 'About',
@@ -88,7 +94,7 @@ const Layout: () => JSX.Element = (): JSX.Element => {
       offset: -100,
     },
     atLeave: {
-      offset: slide(-1000),
+      offset: 0,
     },
     atActive: {
       offset: slide(0),
@@ -113,16 +119,16 @@ const Layout: () => JSX.Element = (): JSX.Element => {
           mapStyles={(styles) => ({
             transform: `translateX(${styles.offset}%)`,
           })}
-          className="switch-wrapper"
         >
           <Route exact path="/" component={Home} />
           <Route path="/about/" component={About} />
+          <Route path="/certificate/" component={Certificate} />
           <Route path="*">
             <Redirect to="/" />
           </Route>
         </AnimatedSwitch>
       </Container>
-      <LotteryDialog
+      <DialogContainer
         content={dialogContent}
         selectedValue={selectedDialogValue}
         isOpen={isDialogOpen}

@@ -17,7 +17,7 @@ const useStyles = makeStyles({
   },
 });
 
-const LotteryDialog: (props: IDialogProps) => JSX.Element = (props: IDialogProps): JSX.Element => {
+const DialogContainer: (props: IDialogProps) => JSX.Element = (props: IDialogProps): JSX.Element => {
   const classes = useStyles();
   const { onClose, selectedValue, isOpen } = props;
 
@@ -32,4 +32,4 @@ const LotteryDialog: (props: IDialogProps) => JSX.Element = (props: IDialogProps
   );
 };
 
-export default LotteryDialog;
+export default DialogContainer;
