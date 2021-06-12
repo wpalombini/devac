@@ -122,7 +122,10 @@ const Layout: () => JSX.Element = (): JSX.Element => {
         >
           <Route exact path="/" component={Home} />
           <Route path="/about/" component={About} />
-          <Route path="/certificate/" component={Certificate} />
+          <Route
+            path="/certificate/"
+            render={(props) => <Certificate {...props} blockchainService={blockchainService} />}
+          />
           <Route path="*">
             <Redirect to="/" />
           </Route>

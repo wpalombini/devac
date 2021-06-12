@@ -10,11 +10,6 @@ export class BlockchainService {
     return typeof this.web3 !== 'undefined' && (await this.web3.eth.getChainId()) > 0;
   }
 
-  public isAdmin(): boolean {
-    // TODO: find whether the default account is the smart contract's admin
-    return this.web3.eth.defaultAccount === '0x2A8705905225f452cB2d15369ed2648868e2c96f';
-  }
-
   public async connect(): Promise<void> {
     if (this._window.ethereum) {
       try {
@@ -36,6 +31,11 @@ export class BlockchainService {
     } else {
       throw new Error('Please use MetaMask');
     }
+  }
+
+  public async createCertificate(fullName: string, address: string): Promise<void> {
+    console.log(fullName);
+    console.log(address);
   }
 
   public getCurrentAccountAddress(): string | null {
