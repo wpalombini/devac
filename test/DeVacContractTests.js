@@ -24,6 +24,25 @@ contract('DeVacContract', (accounts) => {
     });
   });
 
+  describe('isOwner', async () => {
+    it('true when msg.sender is the owner', async () => {
+      const result = await deVacContract.isOwner();
+
+      assert.equal(result, true);
+    });
+
+    it('false when msg.sender is not the owner', async () => {
+      let randomAccount = accounts[getRandomNumber()];
+      while (randomAccount === accounts[0]) {
+        randomAccount = accounts[getRandomNumber()];
+      }
+
+      const result = await deVacContract.isOwner({ from: randomAccount });
+
+      assert.equal(result, false);
+    });
+  });
+
   describe('mint', async () => {
     it('mints new a token successfully', async () => {
       const randomAccount = accounts[getRandomNumber()];

@@ -10,6 +10,8 @@ import NavBar from './NavBar';
 import SideMenu from './SideMenu';
 import { CardMembership, House, Info } from '@material-ui/icons';
 import { Container } from '@material-ui/core';
+import CreateCertificate from '../pages/CreateCertificate';
+import CertificateList from '../pages/CertificateList';
 import Certificate from '../pages/Certificate';
 
 export class BlockchainStateModel {
@@ -26,28 +28,32 @@ const Layout: () => JSX.Element = (): JSX.Element => {
   const [selectedDialogValue, setSelectedDialogValue] = useState('');
   const [dialogContent, setDialogContent] = useState(null);
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
-
-  const menuItems = [
+  const [menuItems, setMenuItems] = useState([
     {
       title: 'Home',
       url: '/',
       icon: <House />,
     },
     {
-      title: 'Certificate',
-      url: '/certificate',
-      icon: <CardMembership />,
-    },
-    {
       title: 'About',
       url: '/about',
       icon: <Info />,
     },
-  ];
+  ]);
 
   const handleConnect: () => Promise<void> = async (): Promise<void> => {
     try {
       await blockchainService.connect();
+
+      const isOwner = await blockchainService.isOwner();
+
+      const currentMenuItems = [...menuItems];
+      const menuItem = isOwner
+        ? { title: 'Create Certificate', url: '/certificates/create', icon: <CardMembership /> }
+        : { title: 'My Certificates', url: '/certificates', icon: <CardMembership /> };
+
+      currentMenuItems.splice(1, 0, menuItem);
+      setMenuItems(currentMenuItems);
 
       setBlockchain({
         ...blockchain,
@@ -123,8 +129,17 @@ const Layout: () => JSX.Element = (): JSX.Element => {
           <Route exact path="/" component={Home} />
           <Route path="/about/" component={About} />
           <Route
-            path="/certificate/"
+            exact
+            path="/certificates/create"
+            render={(props) => <CreateCertificate {...props} blockchainService={blockchainService} />}
+          />
+          <Route
+            path="/certificates/:id"
             render={(props) => <Certificate {...props} blockchainService={blockchainService} />}
+          />
+          <Route
+            path="/certificates/"
+            render={(props) => <CertificateList {...props} blockchainService={blockchainService} />}
           />
           <Route path="*">
             <Redirect to="/" />

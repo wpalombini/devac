@@ -52,6 +52,14 @@ export class BlockchainService {
     }
   }
 
+  public async isOwner(): Promise<boolean> {
+    if (await this.isConnected()) {
+      return await this.deVacContract.methods.isOwner().call();
+    } else {
+      throw new Error('Not connected to blockchain network.');
+    }
+  }
+
   private subscribeToWebWalletEvents(): void {
     this._window.ethereum.on('accountsChanged', (): void => {
       this._window.location.reload();
