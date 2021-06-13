@@ -15,6 +15,7 @@ export interface INavBarProps {
   onBalanceClicked: () => Promise<void>;
   onAccountClicked: (content: JSX.Element) => void;
   onConnectClicked: () => Promise<void>;
+  onDisconnectClicked: () => void;
   onMenuClicked: () => void;
 }
 
@@ -45,14 +46,14 @@ const NavBar: (props: INavBarProps) => JSX.Element = (props: INavBarProps): JSX.
     getBalance();
   }, [props.blockchain.isConnected]);
 
-  const balanceContainer: JSX.Element = props.blockchain.accountAddress ? (
+  const balanceContainer: JSX.Element = props.blockchain.isConnected ? (
     <Button
       onClick={() =>
         props.onAccountClicked(
           <CardContainer
             actions={
-              <Button color="primary" size="small">
-                Disconnect (todo)
+              <Button onClick={props.onDisconnectClicked} color="primary" size="small">
+                Disconnect
               </Button>
             }
             content={

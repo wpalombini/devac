@@ -33,6 +33,10 @@ export class BlockchainService {
     }
   }
 
+  public disconnect(): void {
+    this.web3 = <any>undefined;
+  }
+
   public async createCertificate(fullName: string, address: string): Promise<void> {
     console.log(fullName);
     console.log(address);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 import { AnimatedSwitch, spring } from 'react-router-transition';
 import './Layout.css';
@@ -16,8 +16,9 @@ import Certificate from '../pages/Certificate';
 
 export class BlockchainStateModel {
   public accountAddress: string | null;
-  public isConnected: boolean;
   public balance: string;
+  public isConnected: boolean;
+  public isOwner: boolean;
 }
 
 const blockchainService: BlockchainService = new BlockchainService();
@@ -28,7 +29,8 @@ const Layout: () => JSX.Element = (): JSX.Element => {
   const [selectedDialogValue, setSelectedDialogValue] = useState('');
   const [dialogContent, setDialogContent] = useState(null);
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
-  const [menuItems, setMenuItems] = useState([
+
+  const defaultMenuItems = [
     {
       title: 'Home',
       url: '/',
@@ -39,30 +41,44 @@ const Layout: () => JSX.Element = (): JSX.Element => {
       url: '/about',
       icon: <Info />,
     },
-  ]);
+  ];
+  const [menuItems, setMenuItems] = useState(defaultMenuItems);
 
-  const handleConnect: () => Promise<void> = async (): Promise<void> => {
-    try {
-      await blockchainService.connect();
-
-      const isOwner = await blockchainService.isOwner();
-
-      const currentMenuItems = [...menuItems];
-      const menuItem = isOwner
+  useEffect(() => {
+    if (blockchain.isConnected) {
+      const currentMenuItems = [...defaultMenuItems];
+      const menuItem = blockchain.isOwner
         ? { title: 'Create Certificate', url: '/certificates/create', icon: <CardMembership /> }
         : { title: 'My Certificates', url: '/certificates', icon: <CardMembership /> };
 
       currentMenuItems.splice(1, 0, menuItem);
       setMenuItems(currentMenuItems);
+    } else {
+      setMenuItems(defaultMenuItems);
+    }
+  }, [blockchain]);
+
+  const handleConnect: () => Promise<void> = async (): Promise<void> => {
+    try {
+      await blockchainService.connect();
+      const isOwner = await blockchainService.isOwner();
 
       setBlockchain({
         ...blockchain,
         accountAddress: blockchainService.getCurrentAccountAddress(),
         isConnected: true,
+        isOwner: isOwner,
       });
     } catch (error) {
       console.log('onConnectHandler error: ', error);
     }
+  };
+
+  const handleDisconnect: () => void = (): void => {
+    blockchainService.disconnect();
+    setBlockchain(new BlockchainStateModel());
+    setDialogContent(null);
+    setDialogOpen(false);
   };
 
   const handleGetBalance: () => Promise<void> = async (): Promise<void> => {
@@ -113,6 +129,7 @@ const Layout: () => JSX.Element = (): JSX.Element => {
         onMenuClicked={handleToggleMenu}
         onAccountClicked={handleAccountAddressClick}
         onConnectClicked={handleConnect}
+        onDisconnectClicked={handleDisconnect}
         onBalanceClicked={handleGetBalance}
         blockchain={blockchain}
       />
@@ -127,18 +144,24 @@ const Layout: () => JSX.Element = (): JSX.Element => {
           })}
         >
           <Route exact path="/" component={Home} />
-          <Route path="/about/" component={About} />
+          <Route path="/about" component={About} />
           <Route
             exact
             path="/certificates/create"
-            render={(props) => <CreateCertificate {...props} blockchainService={blockchainService} />}
+            render={(props) => {
+              return blockchain.isOwner ? (
+                <CreateCertificate {...props} blockchainService={blockchainService} />
+              ) : (
+                <Redirect to="/"></Redirect>
+              );
+            }}
           />
           <Route
             path="/certificates/:id"
             render={(props) => <Certificate {...props} blockchainService={blockchainService} />}
           />
           <Route
-            path="/certificates/"
+            path="/certificates"
             render={(props) => <CertificateList {...props} blockchainService={blockchainService} />}
           />
           <Route path="*">
