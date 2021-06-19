@@ -1,10 +1,9 @@
 import { Divider, Drawer, List, ListItem, ListItemIcon, ListItemText, makeStyles } from '@material-ui/core';
 import { Link } from 'react-router-dom';
-import React from 'react';
+import React, { useContext } from 'react';
+import { UXContext } from '../../providers/UXProvider';
 
 export interface ISideMenuProps {
-  isSideMenuOpen: boolean;
-  toggleSideMenu: () => void;
   listItems: IListItem[];
 }
 
@@ -29,6 +28,8 @@ const useStyles = makeStyles({
 const SideMenu: (props: ISideMenuProps) => JSX.Element = (props: ISideMenuProps): JSX.Element => {
   const classes = useStyles();
 
+  const uxContext = useContext(UXContext);
+
   const toggleSideMenu: () => (event: React.KeyboardEvent | React.MouseEvent) => void =
     () => (event: React.KeyboardEvent | React.MouseEvent) => {
       if (
@@ -37,11 +38,11 @@ const SideMenu: (props: ISideMenuProps) => JSX.Element = (props: ISideMenuProps)
       ) {
         return;
       }
-      props.toggleSideMenu();
+      uxContext.setIsSideMenuOpen(!uxContext.isSideMenuOpen);
     };
 
   return (
-    <Drawer anchor="left" open={props.isSideMenuOpen} onClose={toggleSideMenu()}>
+    <Drawer anchor="left" open={uxContext.isSideMenuOpen} onClose={toggleSideMenu()}>
       <div className={classes.header}>
         <h3>deVac App</h3>
       </div>

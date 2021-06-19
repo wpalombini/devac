@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment, useContext, useEffect } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -9,6 +9,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import { BlockchainStateModel } from './Layout';
 import CardContainer from '../Card';
 import { Link } from 'react-router-dom';
+import { UXContext } from '../../providers/UXProvider';
 
 export interface INavBarProps {
   blockchain: BlockchainStateModel;
@@ -16,7 +17,6 @@ export interface INavBarProps {
   onAccountClicked: (content: JSX.Element) => void;
   onConnectClicked: () => Promise<void>;
   onDisconnectClicked: () => void;
-  onMenuClicked: () => void;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -35,6 +35,8 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const NavBar: (props: INavBarProps) => JSX.Element = (props: INavBarProps): JSX.Element => {
   const classes = useStyles();
+
+  const uxContext = useContext(UXContext);
 
   useEffect(() => {
     const getBalance: () => Promise<void> = async (): Promise<void> => {
@@ -83,7 +85,7 @@ const NavBar: (props: INavBarProps) => JSX.Element = (props: INavBarProps): JSX.
       <AppBar position="static">
         <Toolbar>
           <IconButton
-            onClick={props.onMenuClicked}
+            onClick={() => uxContext.setIsSideMenuOpen(!uxContext.isSideMenuOpen)}
             edge="start"
             className={classes.menuButton}
             color="inherit"

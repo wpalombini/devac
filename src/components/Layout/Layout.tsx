@@ -28,7 +28,6 @@ const Layout: () => JSX.Element = (): JSX.Element => {
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [selectedDialogValue, setSelectedDialogValue] = useState('');
   const [dialogContent, setDialogContent] = useState(null);
-  const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
 
   const defaultMenuItems = [
     {
@@ -95,10 +94,6 @@ const Layout: () => JSX.Element = (): JSX.Element => {
     setDialogOpen(true);
   };
 
-  const handleToggleMenu: () => void = (): void => {
-    setIsSideMenuOpen(!isSideMenuOpen);
-  };
-
   const handleCloseDialog = (value: string) => {
     setDialogOpen(false);
     setSelectedDialogValue(value);
@@ -126,14 +121,13 @@ const Layout: () => JSX.Element = (): JSX.Element => {
   return (
     <Router>
       <NavBar
-        onMenuClicked={handleToggleMenu}
         onAccountClicked={handleAccountAddressClick}
         onConnectClicked={handleConnect}
         onDisconnectClicked={handleDisconnect}
         onBalanceClicked={handleGetBalance}
         blockchain={blockchain}
       />
-      <SideMenu listItems={menuItems} isSideMenuOpen={isSideMenuOpen} toggleSideMenu={handleToggleMenu}></SideMenu>
+      <SideMenu listItems={menuItems}></SideMenu>
       <Container maxWidth="md" className="container">
         <AnimatedSwitch
           atEnter={pageTransitions.atEnter}
