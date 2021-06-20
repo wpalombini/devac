@@ -1,10 +1,23 @@
 import Web3 from 'web3';
+import { create, Options } from 'ipfs-http-client';
 import DeVacContract from '../abis/DeVacContract.json';
+import { IPFS } from 'ipfs-core-types';
+
+export class IPFSModel {
+  public fullName: string;
+  type: string;
+  grantedAt: string;
+}
 
 export class BlockchainService {
   private _window: any = window as any;
   private web3: Web3;
   private deVacContract: any;
+  private ipfsClient: IPFS;
+
+  constructor() {
+    this.ipfsClient = create({ url: 'https://ipfs.infura.io:5001' } as Options);
+  }
 
   public async isConnected(): Promise<boolean> {
     return typeof this.web3 !== 'undefined' && (await this.web3.eth.getChainId()) > 0;
@@ -40,6 +53,15 @@ export class BlockchainService {
   public async createCertificate(fullName: string, address: string): Promise<void> {
     console.log(fullName);
     console.log(address);
+
+    const model = new IPFSModel();
+    model.fullName = fullName;
+    model.type = '19';
+    model.grantedAt = new Date().toISOString();
+
+    const result = await this.ipfsClient.add(JSON.stringify(model));
+
+    console.log(result.path);
   }
 
   public getCurrentAccountAddress(): string | null {
