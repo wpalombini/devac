@@ -14,10 +14,10 @@ export const UXContext = createContext<IUXContext>({} as IUXContext);
 export const UXProvider = ({ children }: IUXProps): JSX.Element => {
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
 
-  const uxProps: IUXContext = {
+  const uxContext: IUXContext = {
     isSideMenuOpen: isSideMenuOpen,
     setIsSideMenuOpen: setIsSideMenuOpen,
   };
 
-  return <UXContext.Provider value={uxProps}>{children}</UXContext.Provider>;
+  return <UXContext.Provider value={uxContext}>{children}</UXContext.Provider>;
 };
