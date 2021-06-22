@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 import { AnimatedSwitch, spring } from 'react-router-transition';
 import './Layout.css';
@@ -8,11 +8,13 @@ import About from '../pages/About';
 import Home from '../pages/Home';
 import NavBar from './NavBar';
 import SideMenu from './SideMenu';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import { CardMembership, House, Info } from '@material-ui/icons';
 import { Container } from '@material-ui/core';
 import CreateCertificate from '../pages/CreateCertificate';
 import CertificateList from '../pages/CertificateList';
 import Certificate from '../pages/Certificate';
+import { UXContext } from '../../providers/UXProvider';
 
 export class BlockchainStateModel {
   public accountAddress: string | null;
@@ -42,6 +44,8 @@ const Layout: () => JSX.Element = (): JSX.Element => {
     },
   ];
   const [menuItems, setMenuItems] = useState(defaultMenuItems);
+
+  const uxContext = useContext(UXContext);
 
   useEffect(() => {
     if (blockchain.isConnected) {
@@ -128,6 +132,7 @@ const Layout: () => JSX.Element = (): JSX.Element => {
         blockchain={blockchain}
       />
       <SideMenu listItems={menuItems}></SideMenu>
+      <div style={{ height: '4px' }}>{uxContext.isLoading ? <LinearProgress color="secondary" /> : null}</div>
       <Container maxWidth="md" className="container">
         <AnimatedSwitch
           atEnter={pageTransitions.atEnter}

@@ -51,17 +51,52 @@ export class BlockchainService {
   }
 
   public async createCertificate(fullName: string, address: string): Promise<void> {
-    console.log(fullName);
-    console.log(address);
+    try {
+      const model = new IPFSModel();
+      model.fullName = fullName;
+      model.type = '19';
+      model.grantedAt = new Date().toISOString();
 
-    const model = new IPFSModel();
-    model.fullName = fullName;
-    model.type = '19';
-    model.grantedAt = new Date().toISOString();
+      const result = await this.ipfsClient.add(JSON.stringify(model));
 
-    const result = await this.ipfsClient.add(JSON.stringify(model));
+      await this.deVacContract.methods.mint(address, result.path).send({ from: this.getCurrentAccountAddress() });
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
-    console.log(result.path);
+  public async getCertificates(): Promise<IPFSModel[]> {
+    const ipfsDataList: IPFSModel[] = [];
+
+    try {
+      const tokenIds = await this.deVacContract.methods
+        .getTokensForOwner(this.getCurrentAccountAddress())
+        .call({ from: this.getCurrentAccountAddress() });
+
+      const contractTokenDataList: any[] = [];
+      for (const tokenId of tokenIds) {
+        const tokenData = await this.deVacContract.methods
+          .getTokenDetailsForId(tokenId)
+          .call({ from: this.getCurrentAccountAddress() });
+        contractTokenDataList.push(tokenData);
+      }
+
+      for (const tokenData of contractTokenDataList) {
+        //console.log(tokenData);
+        const response = await fetch(`https://ipfs.io/ipfs/${tokenData.tokenURI}`);
+        if (response.ok) {
+          const content = await response.json();
+          console.log(content);
+          ipfsDataList.push(content);
+        } else {
+          throw new Error(response.status.toString());
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+    return ipfsDataList;
   }
 
   public getCurrentAccountAddress(): string | null {

@@ -1,5 +1,6 @@
 import { Button, Grid, TextField } from '@material-ui/core';
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useContext, useEffect, useState } from 'react';
+import { UXContext } from '../../providers/UXProvider';
 import { BlockchainService } from '../../services/BlockchainService';
 import CardContainer from '../Card';
 
@@ -14,13 +15,17 @@ const CreateCertificate: (props: ICreateCertificateProps) => JSX.Element = (
   const [fullName, setFullName] = useState('');
   const [toAddress, setToAddress] = useState('');
 
+  const uxContext = useContext(UXContext);
+
   useEffect((): void => {
     setCanGenerateCertificate(fullName.length && toAddress.length ? true : false);
   }, [fullName, toAddress]);
 
   const handleGenerateCertificate: () => void = async (): Promise<void> => {
     if (fullName.length && toAddress.length) {
+      uxContext.setIsLoading(true);
       await props.blockchainService.createCertificate(fullName, toAddress);
+      uxContext.setIsLoading(false);
       setFullName('');
       setToAddress('');
     }
