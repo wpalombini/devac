@@ -13,6 +13,11 @@ const useStyles = makeStyles({
   root: {
     width: '100%',
   },
+  content: {
+    '&:last-child': {
+      paddingBottom: 16,
+    },
+  },
 });
 
 const CardContainer: (props: ICardProps) => JSX.Element = (props: ICardProps): JSX.Element => {
@@ -20,8 +25,8 @@ const CardContainer: (props: ICardProps) => JSX.Element = (props: ICardProps): J
 
   return (
     <Card className={classes.root}>
-      <CardContent>{props.content}</CardContent>
-      <CardActions>{props.actions}</CardActions>
+      <CardContent className={classes.content}>{props.content}</CardContent>
+      {props.actions ? <CardActions>{props.actions}</CardActions> : null}
     </Card>
   );
 };
